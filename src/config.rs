@@ -12,7 +12,7 @@ pub async fn get_database_pool() -> Result<PgPool> {
 
     println!(
         "🔍 Intentando conectar a: {}",
-        db_url.split('@').last().unwrap_or("base de datos")
+        db_url.split('@').next_back().unwrap_or("base de datos")
     );
 
     // Crear pool de pg con timeout y configuración mejorada
@@ -28,7 +28,7 @@ pub async fn get_database_pool() -> Result<PgPool> {
         Ok(_) => {
             tracing::info!(
                 "✅ Conexión a la base de datos verificada en: {}",
-                db_url.split('@').last().unwrap_or("base de datos")
+                db_url.split('@').next_back().unwrap_or("base de datos")
             );
             println!("✅ Pool de conexiones creado exitosamente");
         }
@@ -51,7 +51,7 @@ pub async fn get_litener() -> TcpListener {
         );
         "3000".to_string()
     });
-    TcpListener::bind(format!("127.0.0.1:{}", port))
+    TcpListener::bind(format!("127.0.0.1:{port}"))
         .await
         .unwrap()
 }

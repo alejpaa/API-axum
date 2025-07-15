@@ -26,7 +26,7 @@ async fn main() {
             pool
         }
         Err(e) => {
-            eprintln!("❌ Error conectando a la base de datos: {}", e);
+            eprintln!("❌ Error conectando a la base de datos: {e}");
             eprintln!("💡 Verifica tu archivo .env y que PostgreSQL esté corriendo");
             std::process::exit(1);
         }
@@ -41,6 +41,6 @@ async fn main() {
     // Create app with the pool
     let app = get_app(pool).await;
 
-    println!("Api corriendo en el puerto: {}", port);
+    println!("Api corriendo en el puerto: {port}");
     axum::serve(listener, app).await.unwrap();
 }
