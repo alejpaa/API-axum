@@ -1,6 +1,10 @@
 use anyhow::Result;
 use axum::{Json, Router, http::StatusCode, routing::get};
-use serde_json::{Value, json};
+use crate::paciente::{
+    routes::paciente_routes::paciente_routes as paciente_routes,
+    services::paciente_service::PacienteService as paciente_service,
+    reporsitories::paciente_repository::PacienteRepository as paciente_repository};
+use serde_json::{Value,json};
 use sqlx::postgres::{PgPool, PgPoolOptions};
 use std::env;
 use tokio::net::TcpListener;
@@ -41,7 +45,14 @@ pub async fn get_database_pool() -> Result<PgPool> {
 }
 
 pub async fn get_app(pool: PgPool) -> Router {
-    Router::new().route("/", get(root)).with_state(pool)
+    // Crear las instancias necesarias para paciente
+    let paciente_repository = paciente_repository::new(pool.clone());
+    let paciente_service = paciente_service::new(paciente_repository);
+
+    // Combinar las rutas
+    Router::new()
+        .route("/", get(root))
+        .nest("/api", paciente_routes(paciente_service))
 }
 
 pub async fn get_litener() -> TcpListener {
